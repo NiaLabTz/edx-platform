@@ -11,6 +11,7 @@ from pytz import UTC
 import unittest
 from common.djangoapps.student.roles import CourseStaffRole, CourseInstructorRole
 from lms.djangoapps.discussion.django_comment_client.tests.utils import ForumsEnableMixin
+from lms.djangoapps.discussion.rest_api.discussions_notifications import send_response_notifications
 from lms.djangoapps.discussion.rest_api.tests.utils import CommentsServiceMockMixin, ThreadMock
 from xmodule.modulestore.tests.django_utils import ModuleStoreTestCase
 from xmodule.modulestore.tests.factories import CourseFactory
@@ -24,7 +25,6 @@ from lms.djangoapps.discussion.rest_api.utils import (
     get_moderator_users_list,
     get_archived_topics,
     remove_empty_sequentials,
-    send_response_notifications
 )
 from openedx_events.learning.signals import USER_NOTIFICATION_REQUESTED
 

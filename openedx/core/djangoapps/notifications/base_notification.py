@@ -57,6 +57,23 @@ COURSE_NOTIFICATION_TYPES = {
         },
         'email_template': '',
     },
+    'response_on_followed_post': {
+        'notification_app': 'discussion',
+        'name': 'response_on_followed_post',
+        'is_core': False,
+        'web': False,
+        'email': False,
+        'push': False,
+        'info': 'Response on post',
+        'non_editable': [],
+        'content_template': _('<{p}><{strong}>{replier_name}</{strong}> responded to a post you’re following: '
+                              '<{strong}>{post_title}</{strong}></{p}>'),
+        'content_context': {
+            'post_title': 'Post title',
+            'replier_name': 'replier name',
+        },
+        'email_template': '',
+    },
 }
 
 COURSE_NOTIFICATION_APPS = {

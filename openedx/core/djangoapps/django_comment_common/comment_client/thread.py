@@ -11,7 +11,6 @@ log = logging.getLogger(__name__)
 
 
 class Thread(models.Model):
-
     # accessible_fields can be set and retrieved on the model
     accessible_fields = [
         'id', 'title', 'body', 'anonymous', 'anonymous_to_peers', 'course_id',
@@ -21,7 +20,7 @@ class Thread(models.Model):
         'highlighted_body', 'endorsed', 'read', 'group_id', 'group_name', 'pinned',
         'abuse_flaggers', 'resp_skip', 'resp_limit', 'resp_total', 'thread_type',
         'endorsed_responses', 'non_endorsed_responses', 'non_endorsed_resp_total',
-        'context', 'last_activity_at', 'closed_by', 'close_reason_code', 'edit_history',
+        'context', 'last_activity_at', 'closed_by', 'close_reason_code', 'edit_history', 'subscribers'
     ]
 
     # updateable_fields are sent in PUT requests
@@ -162,6 +161,7 @@ class Thread(models.Model):
             metric_action='model.retrieve',
             metric_tags=self._metric_tags
         )
+        breakpoint()
         self._update_from_response(response)
 
     def flagAbuse(self, user, voteable):
@@ -185,7 +185,7 @@ class Thread(models.Model):
         else:
             raise utils.CommentClientRequestError("Can only flag/unflag for threads or comments")
         params = {'user_id': user.id}
-        #if you're an admin, when you unflag, remove ALL flags
+        # if you're an admin, when you unflag, remove ALL flags
         if removeAll:
             params['all'] = True
 
