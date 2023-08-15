@@ -161,7 +161,6 @@ class Thread(models.Model):
             metric_action='model.retrieve',
             metric_tags=self._metric_tags
         )
-        breakpoint()
         self._update_from_response(response)
 
     def flagAbuse(self, user, voteable):

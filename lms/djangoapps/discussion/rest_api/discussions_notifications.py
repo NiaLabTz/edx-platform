@@ -3,6 +3,8 @@ from openedx_events.learning.data import UserNotificationData
 from openedx.core.djangoapps.django_comment_common.comment_client.comment import Comment
 from django.conf import settings
 
+from openedx.core.djangoapps.django_comment_common.comment_client.subscriptions import Subscription
+
 
 def send_response_notifications(thread, course, creator, parent_id=None):
     """
@@ -95,10 +97,23 @@ class DiscussionNotificationSender:
         """
         if self.parent_response:
             users = []
-            for subscriber in self.thread.subscribers:
-                subscriber_user_id = int(subscriber['_id'])
+            page = 1
+            has_more_subscribers = True
 
-                if subscriber_user_id not in [self.thread.user_id , self.parent_response['user_id']]:
-                    users.append(subscriber_user_id)
-            breakpoint()
-            self._send_notification([self.parent_response.user_id], "response_on_followed_post")
+            while has_more_subscribers:
+                subscribers = Subscription.get(self.thread.id, query_params={'page': page})
+
+                if subscribers:
+                    for subscriber in subscribers:
+                        subscriber_user_id = subscriber.user_id
+
+                        # Check if the subscriber is not the thread creator or response creator
+                        if subscriber_user_id not in [self.thread.user_id, self.parent_response['user_id']]:
+                            users.append(subscriber_user_id)
+
+                    page += 1
+                else:
+                    has_more_subscribers = False
+
+            # Send notifications to the filtered subscribers
+            self._send_notification(users, "response_on_followed_post")
