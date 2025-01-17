@@ -6,17 +6,14 @@ Views for the maintenance app.
 import logging
 
 from django.core.validators import ValidationError
-from django.db import transaction
 from django.urls import reverse, reverse_lazy
 from django.utils.decorators import method_decorator
 from django.utils.translation import gettext as _
 from django.views.generic import View
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.views.generic.list import ListView
-from opaque_keys import InvalidKeyError
 from opaque_keys.edx.keys import CourseKey
 
-from cms.djangoapps.contentstore.management.commands.utils import get_course_versions
 from common.djangoapps.edxmako.shortcuts import render_to_response
 from common.djangoapps.util.json_request import JsonResponse
 from common.djangoapps.util.views import require_global_staff

@@ -3,20 +3,15 @@ Tests for the maintenance app views.
 """
 
 
-import json
-
 import ddt
 from django.conf import settings
 from django.urls import reverse
 
-from cms.djangoapps.contentstore.management.commands.utils import get_course_versions
 from common.djangoapps.student.tests.factories import AdminFactory, UserFactory
 from openedx.features.announcements.models import Announcement
-from xmodule.modulestore.django import modulestore  # lint-amnesty, pylint: disable=wrong-import-order
 from xmodule.modulestore.tests.django_utils import ModuleStoreTestCase  # lint-amnesty, pylint: disable=wrong-import-order
-from xmodule.modulestore.tests.factories import CourseFactory, BlockFactory  # lint-amnesty, pylint: disable=wrong-import-order
 
-from .views import COURSE_KEY_ERROR_MESSAGES, MAINTENANCE_VIEWS
+from .views import MAINTENANCE_VIEWS
 
 # This list contains URLs of all maintenance app views.
 MAINTENANCE_URLS = [reverse(view['url']) for view in MAINTENANCE_VIEWS.values()]
