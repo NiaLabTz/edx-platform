@@ -1,17 +1,17 @@
 """Word cloud integration tests using mongo modulestore."""
+import json
+from operator import itemgetter
 from unittest.mock import patch
 
 import pytest
-
-import json
-from operator import itemgetter
-
 from django.conf import settings
 
+from common.djangoapps.student.tests.factories import RequestFactoryNoCsrf
+from lms.djangoapps.courseware import block_render as render
+from openedx.core.lib.url_utils import quote_slashes
 # noinspection PyUnresolvedReferences
 from xmodule.tests.helpers import override_descriptor_system, mock_render_template  # pylint: disable=unused-import
 from xmodule.x_module import STUDENT_VIEW
-
 from .helpers import BaseTestXmodule
 
 
@@ -19,6 +19,10 @@ from .helpers import BaseTestXmodule
 class TestWordCloud(BaseTestXmodule):
     """Integration test for Word Cloud Block."""
     CATEGORY = "word_cloud"
+
+    def setUp(self):
+        super().setUp()
+        self.request_factory = RequestFactoryNoCsrf()
 
     def _get_users_state(self):
         """Return current state for each user:
@@ -29,7 +33,23 @@ class TestWordCloud(BaseTestXmodule):
         users_state = {}
 
         for user in self.users:
-            response = self.clients[user.username].post(self.get_url('get_state'))
+            if settings.USE_EXTRACTED_WORD_CLOUD_BLOCK:
+                request = self.request_factory.post(
+                    '/',
+                    content_type='application/json',
+                    HTTP_X_REQUESTED_WITH='XMLHttpRequest'
+                )
+                request.user = user
+                request.session = {}
+                response = render.handle_xblock_callback(
+                    request,
+                    str(self.course.id),
+                    quote_slashes(self.item_url),
+                    'handle_get_state',
+                    '',
+                )
+            else:
+                response = self.clients[user.username].post(self.get_url('get_state'))
             users_state[user.username] = json.loads(response.content.decode('utf-8'))
 
         return users_state
@@ -42,11 +62,28 @@ class TestWordCloud(BaseTestXmodule):
         users_state = {}
 
         for user in self.users:
-            response = self.clients[user.username].post(
-                self.get_url('submit'),
-                {'student_words[]': words},
-                HTTP_X_REQUESTED_WITH='XMLHttpRequest'
-            )
+            if settings.USE_EXTRACTED_WORD_CLOUD_BLOCK:
+                request = self.request_factory.post(
+                    '/',
+                    data={'student_words': words},
+                    content_type='application/json',
+                    HTTP_X_REQUESTED_WITH='XMLHttpRequest'
+                )
+                request.user = user
+                request.session = {}
+                response = render.handle_xblock_callback(
+                    request,
+                    str(self.course.id),
+                    quote_slashes(self.item_url),
+                    'handle_submit_state',
+                    '',
+                )
+            else:
+                response = self.clients[user.username].post(
+                    self.get_url('submit'),
+                    {'student_words[]': words},
+                    HTTP_X_REQUESTED_WITH='XMLHttpRequest'
+                )
             users_state[user.username] = json.loads(response.content.decode('utf-8'))
 
         return users_state
@@ -204,17 +241,8 @@ class TestWordCloud(BaseTestXmodule):
             for user in self.users
         }
 
-        status_codes = {response.status_code for response in responses.values()}
-        assert status_codes.pop() == 200
-
-        for user in self.users:
-            self.assertDictEqual(
-                json.loads(responses[user.username].content.decode('utf-8')),
-                {
-                    'status': 'fail',
-                    'error': 'Unknown Command!'
-                }
-            )
+        for username, response in responses.items():
+            self.assertEqual(response.status_code, 404)
 
     @patch('xblock.utils.resources.ResourceLoader.render_django_template', side_effect=mock_render_template)
     def test_word_cloud_constructor(self, mock_render_django_template):
@@ -223,7 +251,6 @@ class TestWordCloud(BaseTestXmodule):
         """
         fragment = self.runtime.render(self.block, STUDENT_VIEW)
         expected_context = {
-            'ajax_url': self.block.ajax_url,
             'display_name': self.block.display_name,
             'instructions': self.block.instructions,
             'element_id': self.block.location.html_id(),
@@ -236,5 +263,6 @@ class TestWordCloud(BaseTestXmodule):
             mock_render_django_template.assert_called_once()
             assert fragment.content == self.runtime.render_template('templates/word_cloud.html', expected_context)
         else:
+            expected_context['ajax_url'] = self.block.ajax_url
             expected_context['element_class'] = self.block.location.block_type
             assert fragment.content == self.runtime.render_template('word_cloud.html', expected_context)

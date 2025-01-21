@@ -89,6 +89,8 @@ class WordCloudBlockTest(TestCase):
         """
         Make sure that answer for incorrect request is error json.
         """
+        if settings.USE_EXTRACTED_WORD_CLOUD_BLOCK:
+            return
 
         module_system = get_test_system()
         block = WordCloudBlock(module_system, DictFieldData(self.raw_field_data), Mock())
@@ -107,8 +109,12 @@ class WordCloudBlockTest(TestCase):
         module_system = get_test_system()
         block = WordCloudBlock(module_system, DictFieldData(self.raw_field_data), Mock())
 
-        post_data = MultiDict(('student_words[]', word) for word in ['cat', 'cat', 'dog', 'sun'])
-        response = json.loads(block.handle_ajax('submit', post_data))
+        if settings.USE_EXTRACTED_WORD_CLOUD_BLOCK:
+            post_data = {'student_words': ['cat', 'cat', 'dog', 'sun']}
+            response = block.submit_state(post_data)
+        else:
+            post_data = MultiDict(('student_words[]', word) for word in ['cat', 'cat', 'dog', 'sun'])
+            response = json.loads(block.handle_ajax('submit', post_data))
         assert response['status'] == 'success'
         assert response['submitted'] is True
         assert response['total_count'] == 22
