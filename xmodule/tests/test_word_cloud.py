@@ -46,12 +46,9 @@ class WordCloudBlockTest(TestCase):
         olx_element = etree.fromstring(original_xml)
         runtime.id_generator = Mock()
 
-        if settings.USE_EXTRACTED_WORD_CLOUD_BLOCK:
-            def_id = runtime.id_generator.create_definition(olx_element.tag, olx_element.get('url_name'))
-            keys = ScopeIds(None, olx_element.tag, def_id, runtime.id_generator.create_usage(def_id))
-            block = WordCloudBlock.parse_xml(olx_element, runtime, keys)
-        else:
-            block = WordCloudBlock.parse_xml(olx_element, runtime, None)
+        def_id = runtime.id_generator.create_definition(olx_element.tag, olx_element.get('url_name'))
+        keys = ScopeIds(None, olx_element.tag, def_id, runtime.id_generator.create_usage(def_id))
+        block = WordCloudBlock.parse_xml(olx_element, runtime, keys)
 
         block.location = BlockUsageLocator(
             CourseLocator('org', 'course', 'run', branch='revision'), 'word_cloud', 'block_id'

@@ -266,7 +266,7 @@ class TestWordCloud(BaseTestXmodule):
         expected_context = {
             'display_name': self.block.display_name,
             'instructions': self.block.instructions,
-            'element_class' : self.block.location.block_type,
+            'element_class': self.block.location.block_type,
             'element_id': self.block.location.html_id(),
             'num_inputs': 5,  # default value
             'submitted': False,  # default value,
