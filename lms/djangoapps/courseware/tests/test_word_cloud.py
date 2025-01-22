@@ -241,8 +241,21 @@ class TestWordCloud(BaseTestXmodule):
             for user in self.users
         }
 
-        for username, response in responses.items():
-            self.assertEqual(response.status_code, 404)
+        if settings.USE_EXTRACTED_WORD_CLOUD_BLOCK:
+            for username, response in responses.items():
+                self.assertEqual(response.status_code, 404)
+        else:
+            status_codes = {response.status_code for response in responses.values()}
+            assert status_codes.pop() == 200
+
+            for user in self.users:
+                self.assertDictEqual(
+                    json.loads(responses[user.username].content.decode('utf-8')),
+                    {
+                        'status': 'fail',
+                        'error': 'Unknown Command!'
+                    }
+                )
 
     @patch('xblock.utils.resources.ResourceLoader.render_django_template', side_effect=mock_render_template)
     def test_word_cloud_constructor(self, mock_render_django_template):
@@ -253,6 +266,7 @@ class TestWordCloud(BaseTestXmodule):
         expected_context = {
             'display_name': self.block.display_name,
             'instructions': self.block.instructions,
+            'element_class' : self.block.location.block_type,
             'element_id': self.block.location.html_id(),
             'num_inputs': 5,  # default value
             'submitted': False,  # default value,
@@ -264,5 +278,4 @@ class TestWordCloud(BaseTestXmodule):
             assert fragment.content == self.runtime.render_template('templates/word_cloud.html', expected_context)
         else:
             expected_context['ajax_url'] = self.block.ajax_url
-            expected_context['element_class'] = self.block.location.block_type
             assert fragment.content == self.runtime.render_template('word_cloud.html', expected_context)
