@@ -1,5 +1,7 @@
 """Word cloud integration tests using mongo modulestore."""
 import json
+import re
+from uuid import UUID
 from operator import itemgetter
 from unittest.mock import patch
 
@@ -266,16 +268,18 @@ class TestWordCloud(BaseTestXmodule):
         expected_context = {
             'display_name': self.block.display_name,
             'instructions': self.block.instructions,
-            'element_class': self.block.location.block_type,
-            'element_id': self.block.location.html_id(),
+            'element_class': self.block.scope_ids.block_type,
             'num_inputs': 5,  # default value
             'submitted': False,  # default value,
         }
 
         if settings.USE_EXTRACTED_WORD_CLOUD_BLOCK:
             expected_context['range_num_inputs'] = range(5)
+            uuid_str = re.search(r"UUID\('([a-f0-9\-]+)'\)", fragment.content).group(1)
+            expected_context['element_id'] = UUID(uuid_str)
             mock_render_django_template.assert_called_once()
             assert fragment.content == self.runtime.render_template('templates/word_cloud.html', expected_context)
         else:
             expected_context['ajax_url'] = self.block.ajax_url
+            expected_context['element_id'] = self.block.location.html_id()
             assert fragment.content == self.runtime.render_template('word_cloud.html', expected_context)
