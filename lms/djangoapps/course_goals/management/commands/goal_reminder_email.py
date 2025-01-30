@@ -346,5 +346,5 @@ def send_email_using_ses(user, msg):
 
         log.info(f"Goal Reminder Email: email sent using SES with message ID {response['MessageId']}")
         send_ace_message_sent_signal(DjangoEmailChannel, msg)
-    except Exception as e:
+    except Exception as e:  # pylint: disable=broad-exception-caught
         log.error(f"Goal Reminder Email: Error sending email using SES: {e}")
