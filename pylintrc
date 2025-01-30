@@ -319,7 +319,6 @@ disable =
 	use-dict-literal,
 	useless-return,
 	superfluous-parens,
-	logging-not-lazy,
 
 [REPORTS]
 output-format = text
@@ -416,4 +415,4 @@ int-import-graph =
 [EXCEPTIONS]
 overgeneral-exceptions = builtins.Exception
 
-# beea4890e034034c89c23e4ec1fda511aa592947
+# 7c7b807f2c1ece83bc6010027bb4033ba0765ffa

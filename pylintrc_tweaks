@@ -38,7 +38,6 @@ disable+ =
     use-dict-literal,
     useless-return,
     superfluous-parens,
-    logging-not-lazy,
 
 [BASIC]
 attr-rgx = [a-z_][a-z0-9_]{2,40}$
