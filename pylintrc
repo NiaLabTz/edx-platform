@@ -320,7 +320,6 @@ disable =
 	useless-return,
 	superfluous-parens,
 	logging-not-lazy,
-	broad-exception-caught,
 
 [REPORTS]
 output-format = text
@@ -417,4 +416,4 @@ int-import-graph =
 [EXCEPTIONS]
 overgeneral-exceptions = builtins.Exception
 
-# 85c3d025c367597a0a7b23a05fdde9d8c63e1374
+# beea4890e034034c89c23e4ec1fda511aa592947
