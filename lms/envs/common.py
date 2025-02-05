@@ -1519,7 +1519,7 @@ WIKI_ENABLED = True
 COURSE_MODE_DEFAULTS = {
     'android_sku': None,
     'bulk_sku': None,
-    'currency': 'usd',
+    'currency': 'tzs',
     'description': None,
     'expiration_datetime': None,
     'ios_sku': None,
@@ -2155,7 +2155,7 @@ EMBARGO_SITE_REDIRECT_URL = None
 PAYMENT_SUPPORT_EMAIL = 'billing@example.com'
 
 # Setting for PAID_COURSE_REGISTRATION, DOES NOT AFFECT VERIFIED STUDENTS
-PAID_COURSE_REGISTRATION_CURRENCY = ['usd', '$']
+PAID_COURSE_REGISTRATION_CURRENCY = ['tzs', '$']
 
 ################################# EdxNotes config  #########################
 
