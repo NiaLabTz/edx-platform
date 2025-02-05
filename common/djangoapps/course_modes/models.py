@@ -62,14 +62,14 @@ class CourseMode(models.Model):
     # The 'pretty' name that can be translated and displayed
     mode_display_name = models.CharField(max_length=255, verbose_name=_("Display Name"))
 
-    # The price in USD that we would like to charge for this mode of the course
+    # The price in TZS that we would like to charge for this mode of the course
     # Historical note: We used to allow users to choose from several prices, but later
     # switched to using a single price.  Although this field is called `min_price`, it is
     # really just the price of the course.
     min_price = models.IntegerField(default=0, verbose_name=_("Price"))
 
     # the currency these prices are in, using lower case ISO currency codes
-    currency = models.CharField(default="usd", max_length=8)
+    currency = models.CharField(default="tzs", max_length=8)
 
     # The datetime at which the course mode will expire.
     # This is used to implement "upgrade" deadlines.
@@ -952,7 +952,7 @@ class CourseModesArchive(models.Model):
     # The 'pretty' name that can be translated and displayed
     mode_display_name = models.CharField(max_length=255)
 
-    # minimum price in USD that we would like to charge for this mode of the course
+    # minimum price in TZS that we would like to charge for this mode of the course
     min_price = models.IntegerField(default=0)
 
     # the suggested prices for this mode
@@ -960,7 +960,7 @@ class CourseModesArchive(models.Model):
                                         validators=[validate_comma_separated_integer_list])
 
     # the currency these prices are in, using lower case ISO currency codes
-    currency = models.CharField(default="usd", max_length=8)
+    currency = models.CharField(default="tzs", max_length=8)
 
     # turn this mode off after the given expiration date
     expiration_date = models.DateField(default=None, null=True, blank=True)
