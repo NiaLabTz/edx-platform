@@ -16,10 +16,11 @@ def get_base_template_context(site):
     """
     # When on LMS and a dashboard is available, use that as the dashboard url.
     # Otherwise, use the home url instead.
-    try:
-        dashboard_url = reverse('dashboard')
-    except NoReverseMatch:
-        dashboard_url = reverse('home')
+    # try:
+    #     dashboard_url = reverse('dashboard')
+    # except NoReverseMatch:
+    #     dashboard_url = reverse('home')
+    dashboard_url = "https://nia.tz"
 
     if hasattr(site, 'configuration'):
         site_configuration_values = site.configuration.site_values
